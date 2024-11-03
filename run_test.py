@@ -1,7 +1,6 @@
 import asyncio
 import os
 import random
-import pyautogui
 import time
 from typing import Callable, Coroutine, Any, List, Set
 from dataclasses import dataclass
