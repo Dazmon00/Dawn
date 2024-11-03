@@ -1,6 +1,7 @@
 import asyncio
-from typing import Union, Tuple, Any
+from typing import Any, Tuple
 import httpx
+
 
 class AntiCaptchaImageSolver:
     BASE_URL = "https://api.anti-captcha.com"
@@ -42,7 +43,7 @@ class AntiCaptchaImageSolver:
         except Exception as err:
             return f"An unexpected error occurred: {err}", False
 
-    async def get_captcha_result(self, task_id: Union[int, str]) -> Tuple[Any, bool]:
+    async def get_captcha_result(self, task_id: int | str) -> Tuple[Any, bool]:
         for _ in range(10):
             try:
                 resp = await self.client.post(
