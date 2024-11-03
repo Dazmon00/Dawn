@@ -6,31 +6,31 @@ INSTALL_DIR="$PWD/Dawn"
 
 # 安装和配置函数
 install_and_configure() {
-    # 检查并安装 Python 3.10+
+    echo "检查并安装 Python 3.10+"
     if ! command -v python3 &>/dev/null || [[ ! "$(python3 --version)" =~ ^Python\ 3\.[1-9][0-9].* ]]; then
         echo "Python 3.10 或更高版本未安装，正在安装..."
         brew install python@3.10 || { echo "安装 Python 失败。请检查您的 Homebrew 安装。"; exit 1; }
     fi
 
-    # 检查并删除已存在的目录
+    echo "检查并删除已存在的目录"
     for dir in "$INSTALL_DIR" ; do
         echo "Python 3.10 或更高版本未安装，正在安装..."
         [ -d "$dir" ] && rm -rf "$dir"
     done
 
-    # 更新包管理器并安装必要工具
+    echo "更新包管理器并安装必要工具"
     brew update && brew install git tmux || { echo "安装必要工具失败。"; exit 1; }
 
-    # 克隆仓库
+    echo "克隆仓库"
     git clone -q "https://github.com/Dazmon00/Dawn.git" "$INSTALL_DIR" || { echo "克隆 Dawn 仓库失败。"; exit 1; }
 
-    # 设置虚拟环境并安装依赖
+    echo "设置虚拟环境并安装依赖"
     cd "$INSTALL_DIR" || exit
     python3 -m venv venv
     source "venv/bin/activate"
     python3 -m pip install -r requirements.txt httpx || { echo "安装 Python 依赖失败。"; exit 1; }
 
-    # 启动脚本
+    echo "启动脚本"
     start_script "dawn" "run_test.py"
 }
 
