@@ -24,6 +24,8 @@ delay_before_start:
 imap_settings:
   # Common email providers and their IMAP servers
   gmail.com: imap.gmail.com          # Google Mail
+  163.com: imap.163.com              # GMX Germany (alternate domain)
+  qq.com: imap.qq.com              # GMX Germany (alternate domain)
   yahoo.com: imap.mail.yahoo.com     # Yahoo Mail
   outlook.com: imap-mail.outlook.com  # Microsoft Outlook
   hotmail.com: imap-mail.outlook.com  # Microsoft Hotmail
