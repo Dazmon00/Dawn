@@ -33,6 +33,17 @@ install_dawn() {
     start_script "dawn" "run_test.py"
 }
 
+# 启动脚本函数
+start_script() {
+    local session_name="$1"
+    local script_name="$2"
+    tmux new-session -d -s "$session_name"
+    tmux send-keys -t "$session_name" "cd $INSTALL_DIR" Enter
+    tmux send-keys -t "$session_name" "source venv/bin/activate" Enter
+    tmux send-keys -t "$session_name" "python3 $script_name" Enter
+    tmux attach-session -t "$session_name"
+}
+
 # 主菜单
 main_menu() {
     while true; do
