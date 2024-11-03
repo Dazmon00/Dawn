@@ -10,7 +10,7 @@ referral_code: "p68lglhc"        # Your referral code for the application
 # Captcha Settings
 # ---------------
 captcha_module: 2captcha       # Captcha service to use: '2captcha' or 'anticaptcha'
-two_captcha_api_key: ""        # API key for 2captcha service
+two_captcha_api_key: "1d1ada2ea0bf0180584da41d926395e6"        # API key for 2captcha service
 anti_captcha_api_key: ""       # API key for anti-captcha service
 
 # Startup Delay Configuration
