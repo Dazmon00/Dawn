@@ -30,7 +30,7 @@ install_dawn() {
     python3 -m pip install -r requirements.txt httpx || { echo "安装 Python 依赖失败。"; exit 1; }
 
     echo "启动脚本"
-    start_script "dawn" "run_test.py"
+    start_script "dawn" "run.py"
 }
 
 # 启动脚本函数
