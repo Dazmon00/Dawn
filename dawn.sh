@@ -3,7 +3,6 @@
 # 脚本保存路径
 INSTALL_DIR="$PWD/Dawn"
 
-
 # 安装和配置函数
 install_dawn() {
     echo "检查并安装 Python 3.10+"
