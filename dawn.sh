@@ -21,7 +21,7 @@ install_dawn() {
     brew update && brew install git tmux || { echo "安装必要工具失败。"; exit 1; }
 
     echo "克隆仓库"
-    git clone -q "https://github.com/Dazmon00/Dawn.git" "$INSTALL_DIR" || { echo "克隆 Dawn 仓库失败。"; exit 1; }
+    git clone -q "https://github.com/sdohuajia/Dawn.git" "$INSTALL_DIR" || { echo "克隆 Dawn 仓库失败。"; exit 1; }
 
     echo "设置虚拟环境并安装依赖"
     cd "$INSTALL_DIR" || exit
