@@ -1,7 +1,6 @@
 import asyncio
-from typing import Any, Tuple
+from typing import Union, Tuple, Any
 import httpx
-
 
 class AntiCaptchaImageSolver:
     BASE_URL = "https://api.anti-captcha.com"
