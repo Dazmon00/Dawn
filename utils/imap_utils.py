@@ -1,4 +1,5 @@
 import re
+import time
 from typing import Optional
 import asyncio
 
@@ -57,7 +58,7 @@ async def check_email_for_link(
             f"Account: {email} | Link not found after {max_attempts} attempts, searching in spam folder..."
         )
 
-        spam_folders = ("SPAM", "Spam", "spam", "Junk", "junk", "Spamverdacht")
+        spam_folders = ("SPAM", "Spam", "spam", "Junk", "junk")
         for spam_folder in spam_folders:
 
             async def search_in_spam():
@@ -84,15 +85,14 @@ async def check_email_for_link(
 
 
 def search_for_link_sync(mailbox: MailBox, link_pattern: str) -> Optional[str]:
-    messages = mailbox.fetch()
+    messages = mailbox.fetch(AND(from_="hello@dawninternet.com"))
 
     for msg in messages:
-        if msg.from_ == "hello@dawninternet.com":
-            body = msg.text or msg.html
-            if body:
-                match = re.search(link_pattern, body)
-                if match:
-                    return match.group(0)
+        body = msg.text or msg.html
+        if body:
+            match = re.search(link_pattern, body)
+            if match:
+                return match.group(0)
 
     return None
 

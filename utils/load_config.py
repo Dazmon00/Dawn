@@ -1,5 +1,8 @@
 import os
 import yaml
+import sys
+CurrentPath = os.path.dirname(__file__)
+sys.path.append(CurrentPath)
 from itertools import cycle
 from loguru import logger
 from models import Config, Account
@@ -17,7 +20,6 @@ REQUIRED_PARAMS_FIELDS = (
     "imap_settings",
     "captcha_module",
     "delay_before_start",
-    "referral_code",
 )
 
 

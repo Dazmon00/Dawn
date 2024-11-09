@@ -92,7 +92,6 @@ pytesseract==0.3.13
 python-dateutil==2.9.0
 python-docx==1.1.2
 pytz==2024.2
-# pywin32==306  # 注释掉或删除
 PyYAML==6.0.2
 pyzmq==26.2.0
 RapidFuzz==3.10.1
@@ -114,9 +113,9 @@ termcolor==2.5.0
 threadpoolctl==3.5.0
 tifffile==2024.9.20
 tomli==2.0.2
-torch==2.4.0  # 更新为 CPU 版本
-torchaudio==2.4.0  # 更新为 CPU 版本
-torchvision==0.19.0  # 更新为 CPU 版本
+torch==2.4.1+cu118
+torchaudio==2.4.1+cu118
+torchvision==0.19.0+cu118
 tornado==6.4.1
 tortoise-orm==0.21.7
 tqdm==4.66.6
@@ -125,6 +124,5 @@ typing_extensions==4.12.2
 urllib3==2.2.3
 wcwidth==0.2.13
 wheel==0.43.0
-win32-setctime==1.1.0
 xmod==1.8.1
 zipp==3.20.1

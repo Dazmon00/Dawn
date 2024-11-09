@@ -1,6 +1,10 @@
 import asyncio
 import random
 import sys
+import os
+CurrentPath = os.path.dirname(__file__)
+sys.path.append(CurrentPath)
+sys.path.append(CurrentPath+"/"+"models")
 from typing import Callable, Coroutine, Any, List, Set
 
 from loguru import logger

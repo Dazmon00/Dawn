@@ -3,7 +3,7 @@ from typing import Tuple, Any, Optional
 
 import pytz
 from loguru import logger
-from loader import config, file_operations
+from loader import config
 from models import Account, OperationResult, StatisticData
 
 from .api import DawnExtensionAPI
@@ -11,7 +11,16 @@ from utils import check_email_for_link, check_if_email_valid
 from database import Accounts
 from .exceptions.base import APIError, SessionRateLimited, CaptchaSolvingFailed
 
+import matplotlib.pyplot as plt
+#import cv2
+import numpy as np
+import base64
+from io import BytesIO
+import PIL
 
+from paddleocr import PaddleOCR
+from colorama import Fore, Style
+ocr = PaddleOCR(use_angle_cls=False,use_gpu=False, lang="en")
 class Bot(DawnExtensionAPI):
     def __init__(self, account: Account):
         super().__init__(account)
@@ -25,13 +34,40 @@ class Bot(DawnExtensionAPI):
                 logger.info(
                     f"Account: {self.account_data.email} | Got puzzle image, solving..."
                 )
-                answer, solved, *rest = await self.solve_puzzle(image)
+                image_data = base64.b64decode(image)
+                image = PIL.Image.open(BytesIO(image_data))
+                new_image = PIL.Image.new("RGBA", image.size)
+                # 遍历每个像素
+                for x in range(image.width):
+                    for y in range(image.height):
+                        r, g, b, a = image.getpixel((x, y))
+                        
+                        # 判断像素是否为黑色或透明
+                        if (r <= 125 and g <= 125 and b <= 125) :
+                            new_image.putpixel((x, y), (0, 0, 0, a))  # 保留黑色或透明像素
+                        else:
+                            new_image.putpixel((x, y), (255, 255, 255, 255))  # 将其他像素设为透明
+                new_image_array = np.array(new_image)
+                
+                ocr_text = ocr.ocr(new_image_array)
+                #ocr_text = pytesseract.image_to_string(new_image)
+                #new_image.show()
+                text_no_spaces = ""
+                for i in ocr_text[0]:
+                    text_no_spaces = text_no_spaces + i[1][0]
+                text_no_spaces = text_no_spaces.replace(" ", "")
+                print(text_no_spaces)
 
-                if solved and len(answer) == 6:
-                    logger.success(
-                        f"Account: {self.account_data.email} | Puzzle solved: {answer}"
-                    )
-                    return puzzle_id, answer, rest[0] if rest else None
+                
+                #image.show()
+                answer, solved, *rest = await self.solve_puzzle(image)
+                solved = True
+                
+                if solved and len(text_no_spaces) == 6:
+                    #logger.success(
+                    #    f"Account: {self.account_data.email} | Puzzle solved: {answer}"
+                    #)
+                    return puzzle_id, text_no_spaces, text_no_spaces if text_no_spaces else None
 
                 if len(answer) != 6 and rest:
                     await self.report_invalid_puzzle(rest[0])
@@ -54,56 +90,6 @@ class Bot(DawnExtensionAPI):
         if await Accounts.get_account(email=self.account_data.email):
             await Accounts.delete_account(email=self.account_data.email)
         self.session = self.setup_session()
-
-    async def process_reverify_email(self) -> OperationResult:
-        await self.clear_account_and_session()
-
-        try:
-            confirm_url = await check_email_for_link(
-                imap_server=self.account_data.imap_server,
-                email=self.account_data.email,
-                password=self.account_data.password,
-            )
-
-            if confirm_url is None:
-                logger.error(
-                    f"Account: {self.account_data.email} | Confirmation link not found"
-                )
-                return OperationResult(
-                    identifier=self.account_data.email,
-                    data=self.account_data.password,
-                    status=False,
-                )
-
-            logger.success(
-                f"Account: {self.account_data.email} | Link found, confirming registration..."
-            )
-            response = await self.clear_request(url=confirm_url)
-            if response.status_code == 200:
-                logger.success(
-                    f"Account: {self.account_data.email} | Successfully confirmed registration"
-                )
-                return OperationResult(
-                    identifier=self.account_data.email,
-                    data=self.account_data.password,
-                    status=True,
-                )
-
-            logger.error(
-                f"Account: {self.account_data.email} | Failed to confirm registration"
-            )
-
-        except Exception as error:
-            logger.error(
-                f"Account: {self.account_data.email} | Failed to reverify email: {error}"
-            )
-
-        return OperationResult(
-            identifier=self.account_data.email,
-            data=self.account_data.password,
-            status=False,
-        )
-
 
     async def process_registration(self) -> OperationResult:
         task_id = None
@@ -171,11 +157,6 @@ class Bot(DawnExtensionAPI):
                     )
                     if task_id:
                         await self.report_invalid_puzzle(task_id)
-
-                elif error.error_message == "email already exists":
-                    logger.warning(f"Account: {self.account_data.email} | Email already exists, re-verifying...")
-                    return await self.process_reverify_email()
-
                 else:
                     logger.warning(
                         f"Account: {self.account_data.email} | Captcha expired, re-solving..."
@@ -230,8 +211,6 @@ class Bot(DawnExtensionAPI):
             logger.error(
                 f"Account: {self.account_data.email} | Failed to farm: {error}"
             )
-
-
         except Exception as error:
             logger.error(
                 f"Account: {self.account_data.email} | Failed to farm: {error}"
@@ -341,24 +320,10 @@ class Bot(DawnExtensionAPI):
                     )
                     if task_id:
                         await self.report_invalid_puzzle(task_id)
-
-                elif error.error_message == "Email not verified , Please check spam folder incase you did not get email":
-                    logger.error(
-                        f"Account: {self.account_data.email} | Email not verified, run registration process again"
-                    )
-
-                    await file_operations.export_unverified_email(self.account_data.email, self.account_data.password)
-                    for account in config.accounts_to_farm:
-                        if account.email == self.account_data.email:
-                            config.accounts_to_farm.remove(account)
-
-                    return False
-
                 else:
                     logger.warning(
                         f"Account: {self.account_data.email} | Captcha expired, re-solving..."
                     )
-
                 return await self.login_new_account()
 
             logger.error(
@@ -380,17 +345,16 @@ class Bot(DawnExtensionAPI):
             )
             return False
 
-    async def handle_existing_account(self, db_account_data) -> bool | None:
+    async def handle_existing_account(self, db_account_data) -> bool:
         if db_account_data.sleep_until and await self.handle_sleep(
             db_account_data.sleep_until
         ):
             return False
 
         self.session.headers = db_account_data.headers
-        status, result = await self.verify_session()
-        if not status:
+        if not await self.verify_session():
             logger.warning(
-                f"Account: {self.account_data.email} | Session is invalid, re-logging in: {result}"
+                f"Account: {self.account_data.email} | Session is invalid, re-logging in..."
             )
             await self.clear_account_and_session()
             return await self.process_farming()
