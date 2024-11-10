@@ -120,7 +120,7 @@ function run_dawn() {
 function main_menu() {
     while true; do
         clear
-        echo "脚本由@Dazmon编写，免费开源，请勿相信收费"
+        echo "脚本由@WBTventures @Dazmon编写，免费开源，请勿相信收费"
         echo "感谢@Jaammerr @ferdie 开源代码"
         echo "如有问题，可联系推特，仅此只有一个号"
         echo "================================================================"
