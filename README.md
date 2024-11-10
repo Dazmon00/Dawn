@@ -1,5 +1,6 @@
-# Dawn Extension Bot [1.5] 本地模型识别
+# Dawn Extension Bot [1.5] 本地模型识别, 感谢以下两位大佬的源码：
 # 原作者https://github.com/Jaammerr/The-Dawn-Bot 
+# 原作者https://github.com/sdohuajia/Dawn-py.git
 
 ## 🚀 功能
 
@@ -26,14 +27,10 @@
 
 1. 克隆仓库：
    ```bash
-   git clone https://github.com/GzGod/Dawn_ProMax
+   git clone https://github.com/Dazmon00/Dawn
    ```
 2. 创建并激活虚拟环境：
    ```bash
-   Windows系统：
-   python -m venv venv
-   cd venv/Scripts
-   activate
    Linux（服务器）：
    python3 -m venv venv
    cd venv/bin
