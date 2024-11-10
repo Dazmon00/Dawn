@@ -78,11 +78,11 @@ function install_dawn() {
 
     echo "安装、克隆、虚拟环境设置和配置已完成！"
     echo "部署成功，多号请修改以下文件"
-    echo "$DAWN_DIR/config/farm.txt"
+    echo "vim $DAWN_DIR/config/data/farm.txt"
     echo "格式："
     echo "email:password"
     echo "email:password"
-    echo "$DAWN_DIR/config/proxies.txt"
+    echo "vim $DAWN_DIR/config/data/proxies.txt"
     echo "格式："
     echo "http://user:pass@ip:port"
     echo "socks5://user:password@host:port"
@@ -95,7 +95,7 @@ function install_dawn() {
 function run_dawn() {
     # 进入仓库目录
     cd "$DAWN_DIR" || { echo "无法进入 Dawn 目录"; exit 1; }
-    
+
     # 创建并激活虚拟环境
     echo "正在创建和激活虚拟环境..."
     python3.11 -m venv venv
